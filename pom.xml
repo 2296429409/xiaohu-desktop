@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 
+         http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.xiaohu</groupId>
+    <artifactId>file-upload-gui</artifactId>
+    <version>1.0.0</version>
+    <packaging>jar</packaging>
+
+    <name>File Upload GUI</name>
+    <description>Java GUI application for file upload</description>
+
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <javacv.version>1.5.8</javacv.version>
+        <javacv.ffmpeg.version>5.1.2-1.5.8</javacv.ffmpeg.version>
+        <javacpp.platform.android-arm>android-arm</javacpp.platform.android-arm>
+        <javacpp.platform.android-arm64>android-arm64</javacpp.platform.android-arm64>
+        <javacpp.platform.android-x86>android-x86</javacpp.platform.android-x86>
+        <javacpp.platform.android-x86_64>android-x86_64</javacpp.platform.android-x86_64>
+        <javacpp.platform.ios-arm>ios-arm</javacpp.platform.ios-arm>
+        <javacpp.platform.ios-arm64>ios-arm64</javacpp.platform.ios-arm64>
+        <javacpp.platform.ios-x86>ios-x86</javacpp.platform.ios-x86>
+        <javacpp.platform.ios-x86_64>ios-x86_64</javacpp.platform.ios-x86_64>
+        <javacpp.platform.macosx-x86_64>macosx-x86_64</javacpp.platform.macosx-x86_64>
+        <javacpp.platform.linux-armhf>linux-armhf</javacpp.platform.linux-armhf>
+        <javacpp.platform.linux-arm64>linux-arm64</javacpp.platform.linux-arm64>
+        <javacpp.platform.linux-ppc64le>linux-ppc64le</javacpp.platform.linux-ppc64le>
+        <javacpp.platform.linux-x86>linux-x86</javacpp.platform.linux-x86>
+        <javacpp.platform.linux-x86_64>linux-x86_64</javacpp.platform.linux-x86_64>
+        <javacpp.platform.windows-x86>windows-x86</javacpp.platform.windows-x86>
+        <javacpp.platform.windows-x86_64>windows-x86_64</javacpp.platform.windows-x86_64>
+        <fastjson2.version>2.0.43</fastjson2.version>
+    </properties>
+
+    <dependencies>
+        <!-- 文件上传相关依赖 -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+        
+        <!-- JSON处理 -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>2.15.2</version>
+        </dependency>
+
+        <!-- ffmpeg -->
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>${javacv.ffmpeg.version}</version>
+            <classifier>${javacpp.platform.windows-x86_64}</classifier>
+        </dependency>
+        <dependency>
+            <groupId>org.bytedeco</groupId>
+            <artifactId>javacv</artifactId>
+            <version>${javacv.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>net.bramp.ffmpeg</groupId>
+            <artifactId>ffmpeg</artifactId>
+            <version>0.6.2</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba.fastjson2</groupId>
+            <artifactId>fastjson2</artifactId>
+            <version>${fastjson2.version}</version>
+        </dependency>
+        
+        <!-- SQLite数据库 -->
+        <dependency>
+            <groupId>org.xerial</groupId>
+            <artifactId>sqlite-jdbc</artifactId>
+            <version>3.42.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.34</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.squareup.okhttp3</groupId>
+            <artifactId>okhttp</artifactId>
+            <version>4.9.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!-- Maven编译插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.11.0</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+
+            <!-- Maven打包插件 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.3.0</version>
+                <configuration>
+                    <archive>
+                        <manifest>
+                            <mainClass>com.xiaohu.fileupload.Main</mainClass>
+                        </manifest>
+                    </archive>
+                </configuration>
+            </plugin>
+
+            <!-- 创建可执行JAR包 -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.4.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                        <configuration>
+                            <filters>
+                                <filter>
+                                    <artifact>*:*</artifact>
+                                    <excludes>
+                                        <exclude>xiaohu.db</exclude>
+                                    </excludes>
+                                </filter>
+                            </filters>
+                            <transformers>
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                    <mainClass>com.xiaohu.fileupload.Main</mainClass>
+                                </transformer>
+                            </transformers>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project> 
